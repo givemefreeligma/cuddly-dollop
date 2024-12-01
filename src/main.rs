@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 use std::process::Command;
-use ::rand::{Rng, thread_rng};
+use ::rand::{Rng};
 use std::env;
 
 fn play_video(media_path: &str) -> bool {
