@@ -52,11 +52,11 @@ if random_number >= 5 && random_number <= 7 {
 
 
 	if random_number < 5 {
-		println!("what the fuck is that tiny cock lil bro");
+		println!("I'm sorry there is little hope for you");
 		let vlc_path = "vlc"; // On Windows, you may need to use "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"
 
 		// Path to the media file you want to play
-		let media_path = "2024-11-30 17-52-14.mkv"; // Replace with actual video file path
+		let media_path = "cuddly-dollop/2024-11-30 17-52-14.mkv"; // Replace with actual video file path
 	
 		// Command to start VLC with the media file
 		let status = Command::new(vlc_path)
@@ -87,11 +87,11 @@ if random_number >= 5 && random_number <= 7 {
 
 
 	if random_number > 7 {
-		println!("NICE COCK!!!!!!!!!!!!");
+		println!("Congratulations you won the lottery");
 		let vlc_path = "vlc"; // On Windows, you may need to use "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"
 
 		// Path to the media file you want to play
-		let media_path = "2024-11-30 17-56-28.mkv"; // Replace with actual video file path
+		let media_path = "/home/gooner/cuddly-dollop/src/2024-11-30 17-56-28.mkv"; // Replace with actual video file path
 	
 		// Command to start VLC with the media file
 		let status = Command::new(vlc_path)
