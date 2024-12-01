@@ -2,6 +2,25 @@ use macroquad::prelude::*;
 use std::process::Command;
 use ::rand::{Rng, thread_rng};
 
+fn play_video(media_path: &str) -> bool {
+    let vlc_path = "vlc";
+    
+    let status = Command::new(vlc_path)
+        .arg(media_path)
+        .spawn()
+        .expect("Failed to start VLC player")
+        .wait()
+        .expect("Failed to wait on VLC");
+
+    let success = status.success();
+    if success {
+        println!("VLC played the video successfully.");
+    } else {
+        println!("VLC did not play the video successfully.");
+    }
+    success
+}
+
 // Need to change main to return Result from macroquad
 #[macroquad::main("My Window")]
 async fn main() {
@@ -24,83 +43,17 @@ async fn main() {
         // Your existing logic can go here, but you'll need to trigger it with a condition
         // For example, you might want to play the videos when a key is pressed
         if is_key_pressed(KeyCode::Space) {
-            // Your existing video playing logic here
             if random_number >= 5 && random_number <= 7 {
                 print!("long penis");
-                let vlc_path = "vlc"; // On Windows, you may need to use "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"
-
-                // Path to the media file you want to play
-                let media_path = "/home/gooner/cuddly-dollop/2024-11-28 17-47-20.mkv"; // Replace with actual video file path
-
-                // Command to start VLC with the media file
-                let status = Command::new(vlc_path)
-                    .arg(media_path) // Pass the media file to VLC
-                    .spawn() // Start the VLC process
-                    .expect("Failed to start VLC player")
-                    .wait() // Wait for VLC to finish playing
-                    .expect("Failed to wait on VLC");
-
-                if status.success() {
-                    println!("VLC played the video successfully.");
-                } else {
-                    println!("VLC did not play the video successfully.");
-                }
-            } 
-			else if random_number < 5 {
-				println!("small penis");
-                let vlc_path = "vlc"; // On Windows, you may need to use "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"
-
-                // Path to the media file you want to play
-                let media_path = "/home/gooner/cuddly-dollop/2024-11-30 17-52-14.mkv"; // Replace with actual video file path
-
-                // Command to start VLC with the media file
-                let status = Command::new(vlc_path)
-                    .arg(media_path) // Pass the media file to VLC
-                    .spawn() // Start the VLC process
-                    .expect("Failed to start VLC player")
-                    .wait() // Wait for VLC to finish playing
-                    .expect("Failed to wait on VLC");
-
-                if status.success() {
-                    println!("VLC played the video successfully.");
-                } else {
-                    println!("VLC did not play the video successfully.");
-                }
-
-			}
-
-
-
-		
-				
-				
-				
-				
-				
-			}
-            
-			else if random_number > 7 {
-				println!("you won the lottery");
-                let vlc_path = "vlc"; // On Windows, you may need to use "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"
-
-                // Path to the media file you want to play
-                let media_path = "/home/gooner/cuddly-dollop/2024-11-30 17-52-14.mkv"; // Replace with actual video file path
-
-                // Command to start VLC with the media file
-                let status = Command::new(vlc_path)
-                    .arg(media_path) // Pass the media file to VLC
-                    .spawn() // Start the VLC process
-                    .expect("Failed to start VLC player")
-                    .wait() // Wait for VLC to finish playing
-                    .expect("Failed to wait on VLC");
-
-                if status.success() {
-                    println!("VLC played the video successfully.");
-                } else {
-                    println!("VLC did not play the video successfully.");
-                }
-
-            // ... rest of your conditions ...
+                play_video("/home/gooner/cuddly-dollop/2024-11-28 17-47-20.mkv");
+            } else if random_number < 5 {
+                println!("small penis");
+                play_video("/home/gooner/cuddly-dollop/2024-11-30 17-52-14.mkv");
+            } else if random_number > 7 {
+                println!("you won the lottery");
+                play_video("/home/gooner/cuddly-dollop/2024-11-30 17-56-28.mkv");
+            }
+            std::process::exit(0); // Exit the program after playing the video
         }
 
         next_frame().await;
