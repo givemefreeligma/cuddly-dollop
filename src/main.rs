@@ -1,6 +1,7 @@
 use macroquad::prelude::*;
 use std::process::Command;
 use ::rand::{Rng, thread_rng};
+use std::env;
 
 fn play_video(media_path: &str) -> bool {
     let vlc_path = "vlc";
@@ -24,8 +25,14 @@ fn play_video(media_path: &str) -> bool {
 // Need to change main to return Result from macroquad
 #[macroquad::main("My Window")]
 async fn main() {
-    let mut rng = ::rand::thread_rng();
-    let random_number: u32 = rng.gen_range(1..10);
+    // Get command line args or use random number as fallback
+    let random_number: u32 = env::args()
+        .nth(1)
+        .and_then(|arg| arg.parse().ok())
+        .unwrap_or_else(|| {
+            let mut rng = ::rand::thread_rng();
+            rng.gen_range(1..10)
+        });
     
     // Main game loop
     loop {
@@ -45,13 +52,13 @@ async fn main() {
         if is_key_pressed(KeyCode::Space) {
             if random_number >= 5 && random_number <= 7 {
                 print!("long penis");
-                play_video("/home/gooner/cuddly-dollop/2024-11-28 17-47-20.mkv");
+                play_video("assets/video1.mkv");
             } else if random_number < 5 {
                 println!("small penis");
-                play_video("/home/gooner/cuddly-dollop/2024-11-30 17-52-14.mkv");
+                play_video("assets/video2.mkv");
             } else if random_number > 7 {
                 println!("you won the lottery");
-                play_video("/home/gooner/cuddly-dollop/2024-11-30 17-56-28.mkv");
+                play_video("assets/video3.mkv");
             }
             std::process::exit(0); // Exit the program after playing the video
         }
