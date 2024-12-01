@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 use std::process::Command;
-use ::rand::{Rng};
+use ::rand::{Rng, thread_rng};
 use std::env;
 
 fn play_video(media_path: &str) -> bool {
@@ -31,7 +31,7 @@ async fn main() {
         .and_then(|arg| arg.parse().ok())
         .unwrap_or_else(|| {
             let mut rng = ::rand::thread_rng();
-            rng.gen_range(1..10)
+            rng.gen_range(1..11)
         });
     
     // Main game loop
@@ -40,7 +40,10 @@ async fn main() {
         
         // Draw text with the random number
         draw_text(
-            &format!("Number Of Inches: {}", random_number),
+            &format!("Number Of Inches: {}", 
+                if random_number == 11 { "9/11".to_string() } 
+                else { random_number.to_string() }
+            ),
             20.0,
             40.0,
             30.0,
@@ -48,19 +51,21 @@ async fn main() {
         );
         
         // Your existing logic can go here, but you'll need to trigger it with a condition
-        // For example, you might want to play the videos when a key is pressed
         if is_key_pressed(KeyCode::Space) {
-            if random_number >= 5 && random_number <= 7 {
+            if random_number == 11 {
+                println!("9/11");
+                play_video("assets/video4.mkv");
+            } else if random_number >= 5 && random_number <= 7 {
                 print!("long penis");
                 play_video("assets/video1.mkv");
             } else if random_number < 5 {
                 println!("small penis");
                 play_video("assets/video2.mkv");
-            } else if random_number > 7 {
+            } else if random_number > 7 && random_number < 11 {
                 println!("you won the lottery");
                 play_video("assets/video3.mkv");
             }
-            std::process::exit(0); // Exit the program after playing the video
+            std::process::exit(0);
         }
 
         next_frame().await;
