@@ -2,5 +2,5 @@ Just a retard doing something stupid. I also used AI for 90% of it so it is goin
 
 
 
-Installation instructions. All you need is vlc and rust. If you have any questions just hit me up in GitHub on like an issues or pull request.
+Installation instructions. Download vlc. Then do cd cuddly-dollop and then do cargo run. Then press space to continue after the inches load.
 
