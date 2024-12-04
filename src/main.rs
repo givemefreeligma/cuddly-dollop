@@ -41,7 +41,7 @@ async fn main() {
         // Draw text with the random number
         draw_text(
             &format!("Number Of Inches: {}", 
-                if random_number == 11 { "9/11".to_string() } 
+                if random_number == 11 { "11 inches:".to_string() } 
                 else { random_number.to_string() }
             ),
             20.0,
@@ -53,7 +53,7 @@ async fn main() {
         // Your existing logic can go here, but you'll need to trigger it with a condition
         if is_key_pressed(KeyCode::Space) {
             if random_number == 11 {
-                println!("9/11");
+                println!("Nick Fuentes loves your 11 inch penis ");
                 play_video("assets/video4.mkv");
             } else if random_number >= 5 && random_number <= 7 {
                 print!("long penis");
