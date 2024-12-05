@@ -41,7 +41,7 @@ async fn main() {
 
         if !show_second_message {
             let text = format!("Number Of Inches: {}", 
-                if random_number == 11 { "11 inches:".to_string() } 
+                if random_number == 11 { "11:".to_string() } 
                 else { random_number.to_string() }
             );
 
@@ -79,7 +79,7 @@ async fn main() {
             }
         } else {
             // Show Nick Fuentes message
-            let text = "Nick Fuentes loves you";
+            let text = "P diddy loves you";
             let text_dimensions = measure_text(&text, None, 98, 1.0);
             let screen_width = screen_width();
             let screen_height = screen_height();
