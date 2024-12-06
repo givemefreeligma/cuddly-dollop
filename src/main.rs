@@ -30,7 +30,7 @@ async fn main() {
         .and_then(|arg| arg.parse().ok())
         .unwrap_or_else(|| {
             let mut rng = ::rand::thread_rng();
-            rng.gen_range(1..11)
+            rng.gen_range(1..12)
         });
     
     let mut timer = 0.0;
@@ -64,15 +64,15 @@ async fn main() {
                     show_second_message = true;
                     timer = 0.0;  // Reset timer for second message
                 } else if random_number >= 5 && random_number <= 7 {
-                    print!("long penis");
+                
                     play_video("assets/video1.mkv");
                     std::process::exit(0);
                 } else if random_number < 5 {
-                    println!("small penis");
+                    
                     play_video("assets/video2.mkv");
                     std::process::exit(0);
                 } else if random_number > 7 && random_number < 11 {
-                    println!("you won the lottery");
+                
                     play_video("assets/video3.mkv");
                     std::process::exit(0);
                 }
@@ -102,5 +102,4 @@ async fn main() {
         next_frame().await;
     }
 }
-
 
