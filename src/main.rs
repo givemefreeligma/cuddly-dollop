@@ -2,18 +2,64 @@ use macroquad::prelude::*;
 use std::process::Command;
 use ::rand::Rng;
 use std::env;
+use std::path::PathBuf;
 
 fn play_video(media_path: &str) -> bool {
-    let vlc_path = "vlc";
-    
-    let status = Command::new(vlc_path)
-        .arg(media_path)
-        .spawn()
-        .expect("Failed to start VLC player")
-        .wait()
-        .expect("Failed to wait on VLC");
+    println!("Attempting to play video: {}", media_path);
 
-    status.success()
+    let absolute_path = PathBuf::from(media_path)
+        .canonicalize()
+        .unwrap_or_else(|_| PathBuf::from(media_path));
+    
+    println!("Absolute path: {:?}", absolute_path);
+
+    let mpv_path = String::from_utf8(
+        Command::new("which")
+            .arg("mpv")
+            .output()
+            .expect("Failed to execute which")
+            .stdout
+    ).expect("Failed to convert path to string")
+    .trim()
+    .to_string();
+
+    println!("Using MPV path: {}", mpv_path);
+    println!("Launching MPV...");
+
+    let result = Command::new(&mpv_path)
+        // Basic options
+        .arg("--fullscreen")
+        .arg("--no-terminal")
+        
+        // Video output options
+        .arg("--vo=gpu-next")
+        .arg("--gpu-context=x11egl")
+        .arg("--hwdec=vaapi")
+        
+        // Basic audio options
+        .arg("--audio-device=auto")
+        .arg("--audio-channels=stereo")
+        .arg("--volume-max=200")
+        
+        // The video file
+        .arg(absolute_path.to_str().unwrap())
+        .output();
+
+    match result {
+        Ok(output) => {
+            println!("MPV command executed");
+            if !output.status.success() {
+                println!("MPV command failed with status: {}", output.status);
+                println!("Error output: {}", String::from_utf8_lossy(&output.stderr));
+                println!("Standard output: {}", String::from_utf8_lossy(&output.stdout));
+            }
+            output.status.success()
+        },
+        Err(e) => {
+            println!("Failed to execute MPV command: {}", e);
+            false
+        }
+    }
 }
 
 fn window_conf() -> Conf {
@@ -30,7 +76,7 @@ async fn main() {
         .and_then(|arg| arg.parse().ok())
         .unwrap_or_else(|| {
             let mut rng = ::rand::thread_rng();
-            rng.gen_range(1..12)
+            rng.gen_range(1..=11)
         });
     
     let mut timer = 0.0;
@@ -64,16 +110,13 @@ async fn main() {
                     show_second_message = true;
                     timer = 0.0;  // Reset timer for second message
                 } else if random_number >= 5 && random_number <= 7 {
-                
-                    play_video("assets/video1.mkv");
+                    play_video("assets/video1.mp4");
                     std::process::exit(0);
                 } else if random_number < 5 {
-                    
-                    play_video("assets/video2.mkv");
+                    play_video("assets/video2.mp4");
                     std::process::exit(0);
                 } else if random_number > 7 && random_number < 11 {
-                
-                    play_video("assets/video3.mkv");
+                    play_video("assets/video3.mp4");
                     std::process::exit(0);
                 }
             }
@@ -94,7 +137,7 @@ async fn main() {
 
             timer += get_frame_time();
             if timer >= 2.0 {
-                play_video("assets/video4.mkv");
+                play_video("assets/video4.mp4");
                 std::process::exit(0);
             }
         }
