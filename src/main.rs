@@ -1,10 +1,18 @@
-use macroquad::prelude::*;
+use actix_web::{get, web, App, HttpResponse, HttpServer, Result};
+use actix_files::Files;
+use serde::{Serialize};
+use rand::Rng;
 use std::process::Command;
-use ::rand::Rng;
-use std::env;
 use std::path::PathBuf;
 
-fn play_video(media_path: &str) -> bool {
+#[derive(Serialize)]
+struct Response {
+    number: u32,
+    video_path: Option<String>,
+    message: String,
+}
+
+async fn play_video(media_path: &str) -> bool {
     println!("Attempting to play video: {}", media_path);
 
     let absolute_path = PathBuf::from(media_path)
@@ -62,87 +70,44 @@ fn play_video(media_path: &str) -> bool {
     }
 }
 
-fn window_conf() -> Conf {
-    Conf {
-        fullscreen: true,
-        ..Default::default()
-    }
+#[get("/generate")]
+async fn generate_number() -> Result<HttpResponse> {
+    let random_number: u32 = {
+        let mut rng = rand::thread_rng();
+        rng.gen_range(1..=11)
+    };
+
+    let (video_path, message) = match random_number {
+        11 => (Some("assets/video4.mp4".to_string()), 
+              "P diddy loves you".to_string()),
+        5..=7 => (Some("assets/video1.mp4".to_string()), 
+                format!("Number Of Inches: {}", random_number)),
+        1..=4 => (Some("assets/video2.mp4".to_string()), 
+                format!("Number Of Inches: {}", random_number)),
+        8..=10 => (Some("assets/video3.mp4".to_string()), 
+                 format!("Number Of Inches: {}", random_number)),
+        _ => (None, "Invalid number".to_string()),
+    };
+
+    Ok(HttpResponse::Ok().json(Response {
+        number: random_number,
+        video_path,
+        message,
+    }))
 }
 
-#[macroquad::main(window_conf)]
-async fn main() {
-    let random_number: u32 = env::args()
-        .nth(1)
-        .and_then(|arg| arg.parse().ok())
-        .unwrap_or_else(|| {
-            let mut rng = ::rand::thread_rng();
-            rng.gen_range(1..=11)
-        });
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    println!("Starting server at http://localhost:8080");
     
-    let mut timer = 0.0;
-    let mut show_second_message = false;
-
-    loop {
-        clear_background(WHITE);
-
-        if !show_second_message {
-            let text = format!("Number Of Inches: {}", 
-                if random_number == 11 { "11:".to_string() } 
-                else { random_number.to_string() }
-            );
-
-            let font_size = if random_number == 11 { 70.0 } else { 98.0 };
-            let text_dimensions = measure_text(&text, None, font_size as u16, 1.0);
-            let screen_width = screen_width();
-            let screen_height = screen_height();
-
-            draw_text(
-                &text,
-                (screen_width - text_dimensions.width) / 2.0,
-                (screen_height + text_dimensions.height) / 2.0,
-                font_size,
-                BLACK
-            );
-
-            timer += get_frame_time();
-            if timer >= 2.0 {
-                if random_number == 11 {
-                    show_second_message = true;
-                    timer = 0.0;  // Reset timer for second message
-                } else if random_number >= 5 && random_number <= 7 {
-                    play_video("assets/video1.mp4");
-                    std::process::exit(0);
-                } else if random_number < 5 {
-                    play_video("assets/video2.mp4");
-                    std::process::exit(0);
-                } else if random_number > 7 && random_number < 11 {
-                    play_video("assets/video3.mp4");
-                    std::process::exit(0);
-                }
-            }
-        } else {
-            // Show Nick Fuentes message
-            let text = "P diddy loves you";
-            let text_dimensions = measure_text(&text, None, 98, 1.0);
-            let screen_width = screen_width();
-            let screen_height = screen_height();
-
-            draw_text(
-                &text,
-                (screen_width - text_dimensions.width) / 2.0,
-                (screen_height + text_dimensions.height) / 2.0,
-                98.0,
-                BLACK
-            );
-
-            timer += get_frame_time();
-            if timer >= 2.0 {
-                play_video("assets/video4.mp4");
-                std::process::exit(0);
-            }
-        }
-
-        next_frame().await;
-    }
+    HttpServer::new(|| {
+        App::new()
+            .service(generate_number)
+            .service(Files::new("/assets", "assets").show_files_listing())
+            .service(Files::new("/", "./static").index_file("index.html"))
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
 
