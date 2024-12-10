@@ -1,4 +1,4 @@
-use actix_web::{get, web, App, HttpResponse, HttpServer, Result};
+use actix_web::{get, App, HttpResponse, HttpServer, Result};
 use actix_files::Files;
 use serde::{Serialize};
 use rand::Rng;
